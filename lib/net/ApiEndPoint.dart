@@ -7,7 +7,7 @@ class ApiEndPoint {
   static const String serverUrl = "https://cipw.cwoiot.com";
   // 開發環境
   // static const String serverUrl = "http://192.168.11.92:8180";
-  static const String apiEndpoint = "/,/cipw/v1/";
+  static const String apiEndpoint = "/cipw/v1/";
 
   // User
   static const String user = "user";

@@ -12,6 +12,7 @@ import 'package:haohsing_flutter/utils/NotificationService.dart';
 import 'package:haohsing_flutter/utils/SharedPreferencesHelper.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import '../data/LoginFakerData.dart';
 import '../model/request/user/appleLogin/AppleLoginRequestParams.dart';
 import '../model/request/user/changePassword/ChangePasswordRequestBody.dart';
 import '../model/request/user/changeRegion/ChangeRegionRequestBody.dart';
@@ -65,6 +66,17 @@ class UserNotifier extends StateNotifier<UserState> {
 
   Future<LoginResponse?> login(String account, String psw) async {
     try {
+      // 加入假資料判斷
+      if (account == 'user@mail.com') {
+        state = state.copyWith(loginResponse: loginResponseUser);
+        return loginResponseUser;
+      }
+
+      if (account == 'engineer@mail.com') {
+        state = state.copyWith(loginResponse: loginResponseEngineer);
+        return loginResponseEngineer;
+      }
+
       LoginResponse? loginResponse = await userApiManager.login(account: account, psw: psw);
 
       if (loginResponse != null) {
@@ -187,6 +199,17 @@ class UserNotifier extends StateNotifier<UserState> {
 
   Future<LoginResponse?> longtime(String token, String loginType) async {
     try {
+      // 判斷假 token，直接給對應資料
+      if (token == '@@@user@@@') {
+        state = state.copyWith(loginResponse: loginResponseUser);
+        return loginResponseUser;
+      }
+
+      if (token == '@@@engineer@@@') {
+        state = state.copyWith(loginResponse: loginResponseEngineer);
+        return loginResponseEngineer;
+      }
+
       LoginResponse? longtimeResponse = await userApiManager.longtime(token: token,
           loginType: loginType ?? "");
       state = state.copyWith(loginResponse: longtimeResponse);
@@ -216,6 +239,18 @@ class UserNotifier extends StateNotifier<UserState> {
   Future<UserResponse?> getUserInfo() async {
     try {
       String token = state.loginResponse?.token ?? "";
+
+      // 根據 token 回傳假資料
+      if (token == '@@@user@@@') {
+        state = state.copyWith(userResponse: userResponseUser);
+        return userResponseUser;
+      }
+
+      if (token == '@@@engineer@@@') {
+        state = state.copyWith(userResponse: userResponseEngineer);
+        return userResponseEngineer;
+      }
+
       UserResponse? userResponse = await userApiManager.getUserInfo(token: token);
       state = state.copyWith(userResponse: userResponse);
 
