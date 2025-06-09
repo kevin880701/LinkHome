@@ -16,6 +16,9 @@ import 'package:haohsing_flutter/widgets/home/PermissionShareItem.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:haohsing_flutter/widgets/common/TextWidgets.dart';
+import '../../../../provider/UserProvider.dart';
+import 'BasePermissionShareNotifier.dart';
+import 'FakerPermissionShareProvider.dart';
 import 'PermissionShareProvider.dart';
 import 'package:haohsing_flutter/utils/ToastHelper.dart';
 import 'package:haohsing_flutter/widgets/common/ImageWidgets.dart';
@@ -34,8 +37,15 @@ class PermissionSharePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final permissionShareState = ref.watch(permissionShareProvider);
-    final permissionShareNotifier = ref.read(permissionShareProvider.notifier);
+
+    final token = ref.read(userProvider).loginResponse?.token ?? "";
+    final provider = (token == '@@@user@@@' || token == '@@@engineer@@@')
+        ? fakerPermissionShareProvider
+        : permissionShareProvider;
+
+    final permissionShareNotifier = ref.read(provider.notifier);
+    final permissionShareState = ref.watch(provider);
+
     final selectDevice = useState<List<SetDeviceShareRequestBody>>([]);
     final deviceStatusDataList = useState<Map<int?, List<GetMemberDevicesResponse>>>({});
 

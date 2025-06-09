@@ -7,32 +7,14 @@ import 'package:haohsing_flutter/provider/UpdateStateProvider.dart';
 import 'package:haohsing_flutter/provider/UserProvider.dart';
 import 'package:haohsing_flutter/utils/AppLog.dart';
 
-class PermissionShareState {
-  final List<GetMemberDevicesResponse> memberDevices;
-  final List<GetMemberDevicesPermissionsResponse> memberDevicesPermissions;
-
-  PermissionShareState({
-    this.memberDevices = const [],
-    this.memberDevicesPermissions = const [],
-  });
-
-  PermissionShareState copyWith({
-    List<GetMemberDevicesResponse>? memberDevices,
-    List<GetMemberDevicesPermissionsResponse>? memberDevicesPermissions,
-  }) {
-    return PermissionShareState(
-      memberDevices: List.unmodifiable(memberDevices ?? this.memberDevices),
-      memberDevicesPermissions: List.unmodifiable(memberDevicesPermissions ?? this.memberDevicesPermissions),
-    );
-  }
-}
+import 'BasePermissionShareNotifier.dart';
 
 final permissionShareProvider = StateNotifierProvider.autoDispose<PermissionShareNotifier, PermissionShareState>((ref) {
   return PermissionShareNotifier(ref);
 });
 
-class PermissionShareNotifier extends StateNotifier<PermissionShareState> {
-  PermissionShareNotifier(this.ref) : super(PermissionShareState()) {
+class PermissionShareNotifier extends BasePermissionShareNotifier {
+  PermissionShareNotifier(this.ref) : super() {
     token = ref.read(userProvider).loginResponse?.token ?? "";
     ref.listen<UpdateState>(updateStateProvider, (previous, next) {
       if ((previous?.deviceUpdated != next.deviceUpdated) || (previous?.placeUpdated != next.placeUpdated)) {
@@ -46,6 +28,7 @@ class PermissionShareNotifier extends StateNotifier<PermissionShareState> {
   late String token = "";
   late final DeviceApiManager deviceApiManager;
 
+  @override
   Future<List<GetMemberDevicesResponse>> getMemberDevices({required int placeId}) async {
     try {
       List<GetMemberDevicesResponse> response = await deviceApiManager.getMemberDevices(token, placeId);
@@ -57,11 +40,12 @@ class PermissionShareNotifier extends StateNotifier<PermissionShareState> {
     }
   }
 
+  @override
   Future<List<GetMemberDevicesPermissionsResponse>> getMemberDevicesPermissions(
       {required int placeId, required int userId}) async {
     try {
-      List<GetMemberDevicesPermissionsResponse> response = await deviceApiManager.getMemberDevicesPermissions(token,
-          placeId, userId);
+      List<GetMemberDevicesPermissionsResponse> response = await deviceApiManager.getMemberDevicesPermissions(
+          token, placeId, userId);
       state = state.copyWith(memberDevicesPermissions: response);
       return response;
     } catch (e, stackTrace) {
@@ -70,9 +54,12 @@ class PermissionShareNotifier extends StateNotifier<PermissionShareState> {
     }
   }
 
-  Future<bool> setDeviceShare(List<SetDeviceShareRequestBody> deviceShareList) async {
+  @override
+  Future<bool> setDeviceShare(List<dynamic> deviceShareList) async {
     try {
-      bool response = await deviceApiManager.setDeviceShare(token, deviceShareList);
+      // 實際型別可維持 dynamic（方便 mock 跟實作共用），
+      // 但如果只會用 SetDeviceShareRequestBody，這邊可以打型別
+      bool response = await deviceApiManager.setDeviceShare(token, deviceShareList.cast<SetDeviceShareRequestBody>());
       ref.read(updateStateProvider.notifier).placeUpdated();
       ref.read(updateStateProvider.notifier).deviceUpdated();
       return response;
