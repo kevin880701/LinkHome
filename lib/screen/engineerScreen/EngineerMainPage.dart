@@ -37,15 +37,11 @@ class EngineerMainPage extends HookConsumerWidget {
     final userNotifier = ref.read(userProvider.notifier);
     DateTime? lastPressedTime;
 
-    useEffect(() {
-      notifyNotifier.getShareList();
-      notifyNotifier.getMsg();
-      return null;
-    }, []);
-
-
     useEffect((){
       WidgetsBinding.instance.addPostFrameCallback((_) async {
+        notifyNotifier.getShareList();
+        notifyNotifier.getMsg();
+
         userNotifier.sentFcmToken();
         NotificationService notificationService = NotificationService();
         notificationService.init();

@@ -8,35 +8,18 @@ import 'package:haohsing_flutter/provider/UserProvider.dart';
 import 'package:haohsing_flutter/utils/AppLog.dart';
 import 'package:intl/intl.dart';
 
-class EngineerHomeState {
-  final Map<String, List<EngineerWorkOrderResponse>> monthWorkOrders;
-  final List<EngineerWorkOrderResponse> dayWorkOrders;
-
-  EngineerHomeState({
-    this.monthWorkOrders = const {},
-    this.dayWorkOrders = const [],
-  });
-
-  EngineerHomeState copyWith({
-    Map<String, List<EngineerWorkOrderResponse>>? monthWorkOrders,
-    List<EngineerWorkOrderResponse>? dayWorkOrders,
-  }) {
-    return EngineerHomeState(
-      monthWorkOrders: monthWorkOrders ?? this.monthWorkOrders,
-      dayWorkOrders: List.unmodifiable(dayWorkOrders ?? this.dayWorkOrders),
-    );
-  }
-}
+import 'BaseEngineerHomeNotifier.dart';
 
 final engineerHomeProvider = StateNotifierProvider.autoDispose<EngineerHomeNotifier, EngineerHomeState>((ref) {
   return EngineerHomeNotifier(ref);
 });
 
-class EngineerHomeNotifier extends StateNotifier<EngineerHomeState> {
-  EngineerHomeNotifier(this.ref) : super(EngineerHomeState()) {
+class EngineerHomeNotifier extends BaseEngineerHomeNotifier {
+  EngineerHomeNotifier(this.ref) : super() {
     token = ref.read(userProvider).loginResponse?.token ?? "";
     ref.listen<UpdateState>(updateStateProvider, (previous, next) {
       if ((previous?.deviceUpdated != next.deviceUpdated) || (previous?.placeUpdated != next.placeUpdated)) {
+        // 自動刷新
       }
     });
   }

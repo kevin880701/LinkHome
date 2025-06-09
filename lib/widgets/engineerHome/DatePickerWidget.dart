@@ -12,7 +12,6 @@ import 'package:intl/intl.dart';
 import 'package:haohsing_flutter/widgets/common/TextWidgets.dart';
 
 class DatePickerWidget extends HookWidget {
-
   final Map<String, List<EngineerWorkOrderResponse>> groupedWorkOrders;
   final ValueNotifier<DateTime?> selectDate;
   final ValueNotifier<DateTime> selectMonth;
@@ -26,7 +25,6 @@ class DatePickerWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-
     double screenHeight = MediaQuery.of(context).size.height;
     final DateTime today = DateTime.now();
     final DateRangePickerController _controller = DateRangePickerController();
@@ -44,18 +42,26 @@ class DatePickerWidget extends HookWidget {
             children: [
               Align(
                 alignment: Alignment.center,
-                child: customText(AppTexts.schedule,
-                    fontWeight: FontWeight.w500, color: AppColors.black, fontSize: 20.sp,),
+                child: customText(
+                  AppTexts.schedule,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.black,
+                  fontSize: 20.sp,
+                ),
               ),
               Align(
                 alignment: Alignment.centerRight,
                 child: GestureDetector(
                   onTap: () {
-                    selectDate.value = today;
-                    _controller.displayDate = today;
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      selectDate.value = today;
+                      _controller.displayDate = today;
+                    });
                   },
                   child: customText(AppTexts.today,
-                      fontWeight: FontWeight.w500, color: AppColors.primaryYellow, fontSize: 20.sp),
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.primaryYellow,
+                      fontSize: 20.sp),
                 ),
               ),
             ],
@@ -81,17 +87,21 @@ class DatePickerWidget extends HookWidget {
               todayHighlightColor: Colors.black,
               onSelectionChanged: (args) {
                 if (args.value is DateTime) {
-                  selectDate.value = args.value;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    selectDate.value = args.value;
+                  });
                 }
               },
               onViewChanged: (DateRangePickerViewChangedArgs args) {
-                final startDate = args.visibleDateRange.startDate!;
-                final endDate = args.visibleDateRange.endDate!;
-                final middleDate = startDate.add(
-                  Duration(days: endDate.difference(startDate).inDays ~/ 2),
-                );
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  final startDate = args.visibleDateRange.startDate!;
+                  final endDate = args.visibleDateRange.endDate!;
+                  final middleDate = startDate.add(
+                    Duration(days: endDate.difference(startDate).inDays ~/ 2),
+                  );
 
-                selectMonth.value = middleDate;
+                  selectMonth.value = middleDate;
+                });
               },
               monthViewSettings: DateRangePickerMonthViewSettings(
                 showTrailingAndLeadingDates: true,
@@ -103,16 +113,22 @@ class DatePickerWidget extends HookWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                specialDates: groupedWorkOrders.keys.map((date) => DateTime.parse(date)).toList(),
+                specialDates: groupedWorkOrders.keys
+                    .map((date) => DateTime.parse(date))
+                    .toList(),
               ),
               cellBuilder: (context, cellDetails) {
-
                 final date = cellDetails.date;
                 final dateKey = DateFormat('yyyy-MM-dd').format(date);
-                List<EngineerWorkOrderResponse> workOrdersForDate = groupedWorkOrders[dateKey]?.where((order) => order.status == 1).toList() ?? [];
+                List<EngineerWorkOrderResponse> workOrdersForDate =
+                    groupedWorkOrders[dateKey]
+                            ?.where((order) => order.status == 1)
+                            .toList() ??
+                        [];
 
                 List<Color> indicatorColors = workOrdersForDate.map((order) {
-                  DateTime appointedDate = DateTime.parse(order.appointedDatetime);
+                  DateTime appointedDate =
+                      DateTime.parse(order.appointedDatetime);
                   if (appointedDate.isBefore(DateTime.now())) {
                     return AppColors.lightGrey;
                   } else {
@@ -135,16 +151,18 @@ class DatePickerWidget extends HookWidget {
                     selectDate.value = date;
                   },
                   child: Container(
-                    decoration: (style.displayMode == DateDisplayMode.day)? _MonthCellDecoration(
-                      borderColor: style.borderColor,
-                      backgroundColor: style.backgroundColor,
-                      indicatorColors: indicatorColors,
-                      margin: EdgeInsets.all(10),
-                    ):BoxDecoration(
-                      color: style.backgroundColor,
-                      border: Border.all(color: style.borderColor),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                    decoration: (style.displayMode == DateDisplayMode.day)
+                        ? _MonthCellDecoration(
+                            borderColor: style.borderColor,
+                            backgroundColor: style.backgroundColor,
+                            indicatorColors: indicatorColors,
+                            margin: EdgeInsets.all(10),
+                          )
+                        : BoxDecoration(
+                            color: style.backgroundColor,
+                            border: Border.all(color: style.borderColor),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                     child: Center(
                       child: Text(
                         DateFormat(style.displayFormat).format(date),
@@ -229,15 +247,17 @@ class _MonthCellDecorationPainter extends BoxPainter {
     paint.style = PaintingStyle.fill; // 設置為實心
     const double circleRadius = 2.5;
     const double circleSpacing = 4.0;
-    final double totalWidth = (circleRadius * 2 * indicatorColors.length) + (circleSpacing * (indicatorColors.length - 1));
+    final double totalWidth = (circleRadius * 2 * indicatorColors.length) +
+        (circleSpacing * (indicatorColors.length - 1));
     final double startX = bounds.center.dx - totalWidth / 2;
-    final double indicatorYPosition = bounds.bottom + margin.bottom / 2 + circleRadius + 2;
+    final double indicatorYPosition =
+        bounds.bottom + margin.bottom / 2 + circleRadius + 2;
 
     for (int i = 0; i < indicatorColors.length; i++) {
       paint.color = indicatorColors[i];
       double xOffset = startX + i * (circleRadius * 2 + circleSpacing) + 2;
-      canvas.drawCircle(Offset(xOffset, indicatorYPosition), circleRadius, paint);
+      canvas.drawCircle(
+          Offset(xOffset, indicatorYPosition), circleRadius, paint);
     }
   }
 }
-

@@ -23,6 +23,8 @@ import 'package:intl/intl.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:haohsing_flutter/widgets/common/TextWidgets.dart';
 
+import 'FakerEngineerHomeNotifier.dart';
+
 @RoutePage()
 class EngineerHomePage extends HookConsumerWidget {
   const EngineerHomePage({super.key});
@@ -31,8 +33,14 @@ class EngineerHomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userState = ref.watch(userProvider);
     final updateState = ref.watch(updateStateProvider);
-    final engineerHomeState = ref.watch(engineerHomeProvider);
-    final engineerHomeNotifier = ref.read(engineerHomeProvider.notifier);
+
+    final token = ref.read(userProvider).loginResponse?.token ?? "";
+    final provider = (token == '@@@user@@@' || token == '@@@engineer@@@')
+        ? fakerEngineerHomeProvider
+        : engineerHomeProvider;
+
+    final engineerHomeNotifier = ref.read(provider.notifier);
+    final engineerHomeState = ref.watch(provider);
 
     final DateTime today = DateTime.now();
     final _selectDate = useState<DateTime?>(today);
@@ -40,7 +48,9 @@ class EngineerHomePage extends HookConsumerWidget {
     final currentStatusIndex = useState(0);
 
     Future<void> maintenanceUpdate() async {
-      await engineerHomeNotifier
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+
+        await engineerHomeNotifier
           .getEngineerWorkOrder(year: _selectMonth.value.year, month: _selectMonth.value.month);
 
       if (_selectDate.value != null) {
@@ -50,14 +60,18 @@ class EngineerHomePage extends HookConsumerWidget {
           day: _selectDate.value!.day,
         );
       }
+      });
     }
 
     useValueChanged(_selectMonth.value, (_, __) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
       await engineerHomeNotifier.getEngineerWorkOrder(year: _selectMonth.value.year, month: _selectMonth.value.month);
+      });
       return false;
     });
 
     useValueChanged(_selectDate.value, (_, __) async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (_selectDate.value != null) {
         await engineerHomeNotifier.getEngineerWorkOrder(
           year: _selectDate.value!.year,
@@ -65,6 +79,7 @@ class EngineerHomePage extends HookConsumerWidget {
           day: _selectDate.value!.day,
         );
       }
+      });
       return false;
     });
 
