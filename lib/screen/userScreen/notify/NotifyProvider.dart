@@ -1,4 +1,3 @@
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haohsing_flutter/model/response/device/getShares/GetSharesResponse.dart';
 import 'package:haohsing_flutter/model/response/device/shareReview/ShareReviewRequestParams.dart';
@@ -6,12 +5,14 @@ import 'package:haohsing_flutter/net/DeviceApiManager.dart';
 import 'package:haohsing_flutter/net/MsgApiManager.dart';
 import 'package:haohsing_flutter/utils/AppLog.dart';
 import 'package:intl/intl.dart';
+import '../../../data/NotifyFakerData.dart';
 import '../../../model/request/msg/ReadMsgRequestParams.dart';
 import '../../../model/response/msg/getMsgs/GetMsgResponse.dart';
 import '../../../provider/UpdateStateProvider.dart';
 import '../../../provider/UserProvider.dart';
 
-final notifyProvider = StateNotifierProvider.autoDispose<NotifyNotifier, NotifyState>((ref) {
+final notifyProvider =
+    StateNotifierProvider.autoDispose<NotifyNotifier, NotifyState>((ref) {
   return NotifyNotifier(ref);
 });
 
@@ -54,19 +55,30 @@ class NotifyNotifier extends StateNotifier<NotifyState> {
 
   Future<List<GetMsgResponse>> getMsg() async {
     try {
-      if (token != null) {
-        List<GetMsgResponse> msgResponse = await msgApiManager.getMsg(token: token);
-
-        // 過濾只保留 added_time 在三個月內的消息
-        List<GetMsgResponse> recentMessages = msgResponse.where((msg) {
-          // 將 added_time 轉換為 DateTime 格式
-          DateTime addedTime = DateFormat("yyyy-MM-dd HH:mm").parse(msg.addedTime);
-          // 比較 addedTime 是否在三個月內
+      // 判斷是否為假資料的 token
+      if (token == '@@@user@@@' || token == '@@@engineer@@@') {
+        List<GetMsgResponse> filteredMock = mockMsgResponseList.where((msg) {
+          DateTime addedTime =
+              DateFormat("yyyy-MM-dd HH:mm").parse(msg.addedTime);
           return addedTime.isAfter(DateTime.now().subtract(Duration(days: 90)));
         }).toList();
-        state = state.copyWith(msgList: recentMessages);
-        return recentMessages;
+        state = state.copyWith(msgList: filteredMock);
+        return filteredMock;
       }
+
+      List<GetMsgResponse> msgResponse =
+          await msgApiManager.getMsg(token: token);
+
+      // 過濾只保留 added_time 在三個月內的消息
+      List<GetMsgResponse> recentMessages = msgResponse.where((msg) {
+        // 將 added_time 轉換為 DateTime 格式
+        DateTime addedTime =
+            DateFormat("yyyy-MM-dd HH:mm").parse(msg.addedTime);
+        // 比較 addedTime 是否在三個月內
+        return addedTime.isAfter(DateTime.now().subtract(Duration(days: 90)));
+      }).toList();
+      state = state.copyWith(msgList: recentMessages);
+      return recentMessages;
     } catch (e, stackTrace) {
       AppLog.e("getMsg Error：$e");
     }
@@ -75,6 +87,12 @@ class NotifyNotifier extends StateNotifier<NotifyState> {
 
   Future<List<GetSharesResponse>> getShareList() async {
     try {
+      // 根據假 token 回傳假資料
+      if (token == '@@@user@@@' || token == '@@@engineer@@@') {
+        state = state.copyWith(shareList: mockSharesResponse);
+        return mockSharesResponse;
+      }
+
       final response = await deviceApiManager.getShares(token);
       state = state.copyWith(shareList: response);
       return response;
@@ -87,8 +105,10 @@ class NotifyNotifier extends StateNotifier<NotifyState> {
   Future<bool> readMsg(int msgId) async {
     try {
       if (token != null) {
-        ReadMsgRequestParams readMsgRequestParams = ReadMsgRequestParams(msgId: msgId);
-        final response = await msgApiManager.readMsg(params: readMsgRequestParams, token: token);
+        ReadMsgRequestParams readMsgRequestParams =
+            ReadMsgRequestParams(msgId: msgId);
+        final response = await msgApiManager.readMsg(
+            params: readMsgRequestParams, token: token);
         ref.read(updateStateProvider.notifier).msgUpdated();
         return response;
       }
@@ -112,12 +132,15 @@ class NotifyNotifier extends StateNotifier<NotifyState> {
 
   Future<bool> shareReview(int? placeId, int deviceId, int accept) async {
     try {
-      ShareReviewRequestParams shareReviewRequestParams = ShareReviewRequestParams(
+      ShareReviewRequestParams shareReviewRequestParams =
+          ShareReviewRequestParams(
         placeId: placeId,
         deviceId: deviceId,
         accept: accept,
       );
-      final response = await deviceApiManager.shareReview(token, shareReviewRequestParams).then((isReviewSuccess) {
+      final response = await deviceApiManager
+          .shareReview(token, shareReviewRequestParams)
+          .then((isReviewSuccess) {
         if (isReviewSuccess) {
           getShareList();
         }
