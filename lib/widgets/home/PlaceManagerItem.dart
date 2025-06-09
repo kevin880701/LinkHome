@@ -13,6 +13,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:haohsing_flutter/widgets/common/TextWidgets.dart';
 import 'package:haohsing_flutter/widgets/common/ImageWidgets.dart';
 
+import '../../provider/UserProvider.dart';
+import '../../screen/userScreen/home/placeManager/FakerPlaceManagerNotifier.dart';
+
 class PlaceManagerItem extends HookConsumerWidget {
   final int index;
 
@@ -23,8 +26,15 @@ class PlaceManagerItem extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final placeManagerState = ref.watch(placeManagerProvider);
-    final placeManagerNotifier = ref.read(placeManagerProvider.notifier);
+    final token = ref.read(userProvider).loginResponse?.token ?? "";
+    final useFaker = token == '@@@user@@@' || token == '@@@engineer@@@';
+
+// 根據 token 使用對應的 provider
+    final provider = useFaker ? fakerPlaceManagerProvider : placeManagerProvider;
+
+    final placeManagerState = ref.watch(provider);
+    final placeManagerNotifier = ref.read(provider.notifier);
+
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

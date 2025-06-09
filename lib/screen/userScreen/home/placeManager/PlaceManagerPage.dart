@@ -14,6 +14,8 @@ import 'package:haohsing_flutter/widgets/home/PlaceManagerItem.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:haohsing_flutter/widgets/common/TextWidgets.dart';
+import '../../../../provider/UserProvider.dart';
+import 'FakerPlaceManagerNotifier.dart';
 import 'PlaceManagerProvider.dart';
 import 'package:haohsing_flutter/widgets/common/ImageWidgets.dart';
 
@@ -24,8 +26,14 @@ class PlaceManagerPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final placeManagerState = ref.watch(placeManagerProvider);
-    final placeManagerNotifier = ref.read(placeManagerProvider.notifier);
+    final token = ref.read(userProvider).loginResponse?.token ?? "";
+    final useFaker = token == '@@@user@@@' || token == '@@@engineer@@@';
+
+// 根據 token 使用對應的 provider
+    final provider = useFaker ? fakerPlaceManagerProvider : placeManagerProvider;
+
+    final placeManagerState = ref.watch(provider);
+    final placeManagerNotifier = ref.read(provider.notifier);
     final ScrollController scrollController = ScrollController();
 
     void scrollToBottom() {

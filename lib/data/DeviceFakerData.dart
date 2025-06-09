@@ -1,6 +1,7 @@
 import '../model/response/device/deviceInfo/DeviceInfoResponse.dart';
 import '../model/response/device/homeDeviceInfo/HomeDeviceInfoResponse.dart';
 import '../model/response/place/areaList/AreaListResponse.dart';
+import '../model/response/place/placeDtls/PlaceDtlsResponse.dart';
 import '../model/response/place/placeList/PlaceListResponse.dart';
 
 final mockPlaceList = [
@@ -23,6 +24,30 @@ final mockAreaListByPlaceId = {
     const AreaListResponse(areaId: 3002, name: '冷藏倉庫', placeId: 103),
   ],
 };
+
+final mockPlaceDtlsList = [
+  const PlaceDtlsResponse(
+    placeId: 101,
+    name: '新北中和廠',
+    userId: 1,
+    areaCount: 2,    // 對應 mockAreaListByPlaceId[101].length
+    shareCount: 3,   // 假設有 3 個分享成員（可自訂，或根據需求設定）
+  ),
+  const PlaceDtlsResponse(
+    placeId: 102,
+    name: '桃園龍潭倉庫',
+    userId: 1,
+    areaCount: 2,    // 對應 mockAreaListByPlaceId[102].length
+    shareCount: 2,   // 假設
+  ),
+  const PlaceDtlsResponse(
+    placeId: 103,
+    name: '高雄小港場',
+    userId: 1,
+    areaCount: 2,    // 對應 mockAreaListByPlaceId[103].length
+    shareCount: 1,   // 假設
+  ),
+];
 
 final mockDeviceListByPlaceAndArea = {
   '${101}_${1001}': [

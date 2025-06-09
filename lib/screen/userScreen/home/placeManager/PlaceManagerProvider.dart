@@ -5,12 +5,14 @@ import 'package:haohsing_flutter/provider/UpdateStateProvider.dart';
 import 'package:haohsing_flutter/provider/UserProvider.dart';
 import 'package:haohsing_flutter/utils/AppLog.dart';
 
+import 'BasePlaceManagerNotifier.dart';
+
 final placeManagerProvider = StateNotifierProvider.autoDispose<PlaceManagerNotifier, List<PlaceDtlsResponse>>((ref) {
   return PlaceManagerNotifier(ref);
 });
 
-class PlaceManagerNotifier extends StateNotifier<List<PlaceDtlsResponse>> {
-  PlaceManagerNotifier(this.ref) : super([]) {
+class PlaceManagerNotifier extends BasePlaceManagerNotifier {
+  PlaceManagerNotifier(this.ref) {
     token = ref.read(userProvider).loginResponse?.token ?? "";
     ref.listen<UpdateState>(updateStateProvider, (previous, next) {
       if ((previous?.deviceUpdated != next.deviceUpdated) || (previous?.placeUpdated != next.placeUpdated)) {
