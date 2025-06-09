@@ -1,42 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haohsing_flutter/model/response/place/areaList/AreaListResponse.dart';
-import 'package:haohsing_flutter/model/response/place/placeList/PlaceListResponse.dart';
 import 'package:haohsing_flutter/net/DeviceApiManager.dart';
 import 'package:haohsing_flutter/net/PlaceApiManager.dart';
 import 'package:haohsing_flutter/provider/UpdateStateProvider.dart';
 import 'package:haohsing_flutter/provider/UserProvider.dart';
 import 'package:haohsing_flutter/utils/AppLog.dart';
 
-class AreaManagerState {
-  final int placeId;
-  final List<AreaListResponse> areaList;
-  final List<PlaceListResponse> placeList;
+import 'BaseAreaManagerNotifier.dart';
 
-  AreaManagerState({
-    this.placeId = -1,
-    this.areaList = const [],
-    this.placeList = const [],
-  });
-
-  AreaManagerState copyWith({
-    int? placeId,
-    List<AreaListResponse>? areaList,
-    List<PlaceListResponse>? placeList,
-  }) {
-    return AreaManagerState(
-      placeId: placeId ?? this.placeId,
-      areaList: List.unmodifiable(areaList ?? this.areaList),
-      placeList: List.unmodifiable(placeList ?? this.placeList),
-    );
-  }
-}
-
-final areaManagerProvider = StateNotifierProvider.autoDispose<AddDeviceNotifier, AreaManagerState>((ref) {
-  return AddDeviceNotifier(ref);
+final areaManagerProvider = StateNotifierProvider.autoDispose<AreaManagerNotifier, AreaManagerState>((ref) {
+  return AreaManagerNotifier(ref);
 });
 
-class AddDeviceNotifier extends StateNotifier<AreaManagerState> {
-  AddDeviceNotifier(this.ref) : super(AreaManagerState()) {
+class AreaManagerNotifier extends BaseAreaManagerNotifier{
+  AreaManagerNotifier(this.ref) : super(AreaManagerState()) {
     token = ref.read(userProvider).loginResponse?.token ?? "";
     ref.listen<UpdateState>(updateStateProvider, (previous, next) {
       if ((previous?.placeUpdated != next.placeUpdated)) {

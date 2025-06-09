@@ -14,8 +14,12 @@ import 'package:haohsing_flutter/widgets/common/ImageWidgets.dart';
 import 'package:haohsing_flutter/widgets/home/AreaManagerItem.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:auto_route/auto_route.dart';
+import '../../../../provider/UserProvider.dart';
+import '../placeManager/FakerPlaceManagerNotifier.dart';
 import 'AreaManagerProvider.dart';
 import 'package:haohsing_flutter/widgets/common/TextWidgets.dart';
+
+import 'FakerAreaManagerNotifier.dart';
 
 @RoutePage()
 class AreaManagerPage extends HookConsumerWidget {
@@ -29,8 +33,13 @@ class AreaManagerPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final areaManagerNotifier = ref.read(areaManagerProvider.notifier);
-    final areaManagerState = ref.watch(areaManagerProvider);
+    final token = ref.read(userProvider).loginResponse?.token ?? "";
+    final provider = (token == '@@@user@@@' || token == '@@@engineer@@@')
+        ? fakerAreaManagerProvider
+        : areaManagerProvider;
+
+    final areaManagerNotifier = ref.read(provider.notifier);
+    final areaManagerState = ref.watch(provider);
 
     useEffect(() {
       Future.microtask(() async {
