@@ -32,6 +32,18 @@ class HomePage extends HookConsumerWidget {
     final homeState = ref.watch(homeProvider);
     final homeNotifier = ref.read(homeProvider.notifier);
 
+    void updatePlaceIndex() {
+      if (homeState.placeList.isNotEmpty &&
+          homeState.areaList.isNotEmpty &&
+          homeState.placeIndex >= 0 &&
+          homeState.areaIndex >= 0) {
+        homeNotifier.getDeviceList(
+          placeId: homeState.placeList[ref.read(homeProvider).placeIndex].placeId,
+          areaId: homeState.areaList[ref.read(homeProvider).areaIndex].areaId,
+        );
+      }
+    }
+
     useEffect(() {
       Future.microtask(() async {
         await homeNotifier.getPlaceList().then((placeList) {
@@ -45,14 +57,23 @@ class HomePage extends HookConsumerWidget {
     useEffect(() {
       Future.microtask(() async {
         if (homeState.placeList.isNotEmpty) {
-          await homeNotifier.getAreaList(homeState.placeList[homeState.placeIndex].placeId).then((areaList) {
+          await homeNotifier.getAreaList(homeState.placeList[homeState.placeIndex].placeId).then((areaList) async {
+
             homeNotifier.updateAreaIndex(newAreaIndex: 0);
+            updatePlaceIndex();
             return areaList;
           });
         }
       });
       return null;
     }, [homeState.placeIndex]);
+
+    useEffect(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        updatePlaceIndex();
+      });
+      return null;
+    }, [homeState.areaIndex]);
 
     useEffect(() {
       Future.microtask(() async {
@@ -71,21 +92,6 @@ class HomePage extends HookConsumerWidget {
       });
       return null;
     }, [homeState.areaIndex, homeState.placeIndex]);
-
-    useEffect(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (homeState.placeList.isNotEmpty &&
-            homeState.areaList.isNotEmpty &&
-            homeState.placeIndex >= 0 &&
-            homeState.areaIndex >= 0) {
-          homeNotifier.getDeviceList(
-            placeId: homeState.placeList[homeState.placeIndex].placeId,
-            areaId: homeState.areaList[homeState.areaIndex].areaId,
-          );
-        }
-      });
-      return null;
-    }, [homeState.areaIndex]);
 
     // 下拉刷新功能
     Future<void> _refresh() async {

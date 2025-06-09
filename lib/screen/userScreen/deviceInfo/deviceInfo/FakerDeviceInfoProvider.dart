@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:haohsing_flutter/model/response/device/deviceInfo/DeviceInfoResponse.dart';
+import 'package:haohsing_flutter/model/response/place/placeList/PlaceListResponse.dart';
 import 'package:haohsing_flutter/net/DeviceApiManager.dart';
 import 'package:haohsing_flutter/net/PlaceApiManager.dart';
 import 'package:haohsing_flutter/provider/PageProvider.dart';
@@ -7,15 +8,16 @@ import 'package:haohsing_flutter/provider/UpdateStateProvider.dart';
 import 'package:haohsing_flutter/provider/UserProvider.dart';
 import 'package:haohsing_flutter/utils/AppLog.dart';
 
+import '../../../../data/DeviceFakerData.dart';
 import 'BaseDeviceInfoNotifier.dart';
+import 'DeviceInfoProvider.dart';
 
-
-final deviceInfoProvider = StateNotifierProvider.autoDispose<DeviceInfoNotifier, DeviceInfoState>((ref) {
-  return DeviceInfoNotifier(ref);
+final fakerDeviceInfoProvider = StateNotifierProvider.autoDispose<FakerDeviceInfoNotifier, DeviceInfoState>((ref) {
+  return FakerDeviceInfoNotifier(ref);
 });
 
-class DeviceInfoNotifier extends BaseDeviceInfoNotifier {
-  DeviceInfoNotifier(this.ref) : super(ref) {
+class FakerDeviceInfoNotifier extends BaseDeviceInfoNotifier {
+  FakerDeviceInfoNotifier(this.ref) : super(ref) {
     token = ref.read(userProvider).loginResponse?.token ?? "";
     ref.listen<UpdateState>(updateStateProvider, (previous, next) {
       if ((previous?.deviceUpdated != next.deviceUpdated)) {
@@ -31,47 +33,66 @@ class DeviceInfoNotifier extends BaseDeviceInfoNotifier {
   late final DeviceApiManager deviceApiManager;
 
   @override
-  Future<void> updateDeviceId({required int deviceId})async {
+  Future<void> updateDeviceId({required int deviceId}) async {
     state = state.copyWith(deviceId: deviceId);
   }
 
   @override
-  Future<void> updateDeviceInfo({required DeviceInfoResponse deviceInfo})async {
+  Future<void> updateDeviceInfo({required DeviceInfoResponse deviceInfo}) async {
     state = state.copyWith(deviceResponse: deviceInfo);
   }
 
   @override
   Future<DeviceInfoResponse?> getDeviceInfo(int deviceId) async {
     try {
-      DeviceInfoResponse? deviceResponse = await deviceApiManager.getDeviceInfo(token, deviceId);
+      if (token == '@@@user@@@' || token == '@@@engineer@@@') {
+        final mockData = mockDeviceInfoById[deviceId];
+        if (mockData != null) {
+          state = state.copyWith(deviceResponse: mockData);
+          return mockData;
+        }
+      }
+      final deviceResponse = await deviceApiManager.getDeviceInfo(token, deviceId);
       state = state.copyWith(deviceResponse: deviceResponse);
       return deviceResponse;
     } catch (e, stackTrace) {
-      AppLog.e("getDeviceInfo Error：$e");
+      AppLog.e("faker getDeviceInfo Error：\$e");
     }
     return null;
   }
 
   @override
-  Future<bool> deviceValue(int deviceId, String statisticKey, String value) async {
+  Future<bool> changeDeviceName(int deviceId, String deviceName) async {
     try {
-      bool deviceResponse = await deviceApiManager.deviceValue(token, deviceId, statisticKey, value);
+      final isSuccess = await deviceApiManager.changeDeviceName(token, deviceId, deviceName);
       ref.read(updateStateProvider.notifier).deviceUpdated();
-      return deviceResponse;
-    } catch (e, stackTrace) {
-      AppLog.e("deviceValue Error：$e");
+      return isSuccess;
+    } catch (e) {
+      AppLog.e("faker changeDeviceName Error：\$e");
     }
     return false;
   }
 
   @override
-  Future<bool> changeDeviceName(int deviceId, String deviceName) async {
+  Future<bool> deleteDevice(int deviceId) async {
     try {
-      bool deviceResponse = await deviceApiManager.changeDeviceName(token, deviceId, deviceName);
+      final isSuccess = await deviceApiManager.deleteDevice(token, deviceId);
       ref.read(updateStateProvider.notifier).deviceUpdated();
-      return deviceResponse;
-    } catch (e, stackTrace) {
-      AppLog.e("changeDeviceName Error：$e");
+      return isSuccess;
+    } catch (e) {
+      AppLog.e("faker deleteDevice Error：\$e");
+    }
+    return false;
+  }
+
+  @override
+  Future<bool> deviceValue(int deviceId, String statisticKey, String value) async {
+    try {
+      final isSuccess = await deviceApiManager.deviceValue(token, deviceId, statisticKey, value);
+      ref.read(updateStateProvider.notifier).deviceUpdated();
+      return isSuccess;
+    } catch (e) {
+      AppLog.e("faker deviceValue Error：\$e");
     }
     return false;
   }
@@ -87,17 +108,5 @@ class DeviceInfoNotifier extends BaseDeviceInfoNotifier {
         }
       });
     });
-  }
-
-  @override
-  Future<bool> deleteDevice(int deviceId) async {
-    try {
-      bool deviceResponse = await deviceApiManager.deleteDevice(token, deviceId);
-      ref.read(updateStateProvider.notifier).deviceUpdated();
-      return deviceResponse;
-    } catch (e, stackTrace) {
-      AppLog.e("deleteDevice Error：$e");
-    }
-    return false;
   }
 }

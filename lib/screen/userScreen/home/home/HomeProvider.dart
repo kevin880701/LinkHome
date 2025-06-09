@@ -9,6 +9,8 @@ import 'package:haohsing_flutter/provider/UserProvider.dart';
 import 'package:haohsing_flutter/resources/AppTexts.dart';
 import 'package:haohsing_flutter/utils/AppLog.dart';
 
+import '../../../../data/DeviceFakerData.dart';
+
 class HomeState {
   final List<AreaListResponse> areaList;
   final List<PlaceListResponse> placeList;
@@ -69,6 +71,25 @@ class HomeNotifier extends StateNotifier<HomeState> {
 
   Future<List<AreaListResponse>> getAreaList(int placeId) async {
     try {
+      // 假資料條件判斷
+      if (token == '@@@user@@@' || token == '@@@engineer@@@') {
+        List<AreaListResponse> areaList;
+
+        if (placeId == -1) {
+          // 整合所有 mock 區域資料並插入「全部」
+          areaList = [
+            ...mockAreaListByPlaceId.values.expand((list) => list),
+          ];
+        } else {
+          final mockList = mockAreaListByPlaceId[placeId] ?? [];
+          areaList = [
+            ...mockList,
+          ];
+        }
+        state = state.copyWith(areaList: areaList);
+        return areaList;
+      }
+
       List<AreaListResponse> placeAreasResponseList = await placeApiManager.getAreaList(token, placeId) ??
           [AreaListResponse(placeId: -1, name: AppTexts.all, areaId: -1)];
       var areaList = placeAreasResponseList.toList();
@@ -83,6 +104,14 @@ class HomeNotifier extends StateNotifier<HomeState> {
 
   Future<List<PlaceListResponse>> getPlaceList() async {
     try {
+
+      // 假資料邏輯：token 為模擬值則回傳假資料
+      if (token == '@@@user@@@' || token == '@@@engineer@@@') {
+        final fakeList = [...mockPlaceList];
+        state = state.copyWith(placeList: fakeList);
+        return fakeList;
+      }
+
       List<PlaceListResponse> placeResponse = await placeApiManager.getPlaceList(token) ??
           [PlaceListResponse(placeId: -1, name: AppTexts.all, userId: -1)];
       var placeList = placeResponse.toList();
@@ -97,6 +126,17 @@ class HomeNotifier extends StateNotifier<HomeState> {
 
   Future<List<HomeDeviceInfoResponse>> getDeviceList({required int placeId, required int areaId}) async {
     try {
+      // 假資料判斷
+      if (token == '@@@user@@@' || token == '@@@engineer@@@') {
+        final key = mockDeviceListByPlaceAndArea.keys.firstWhere(
+              (k) => k.endsWith('_$areaId'),
+          orElse: () => '',
+        );
+        final mockList = mockDeviceListByPlaceAndArea[key] ?? [];
+        state = state.copyWith(deviceList: mockList);
+        return mockList;
+      }
+
       List<HomeDeviceInfoResponse> deviceList = await deviceApiManager.getDeviceList(token, placeId, areaId) ?? [];
       state = state.copyWith(deviceList: deviceList);
       return deviceList;

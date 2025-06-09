@@ -22,9 +22,13 @@ import 'package:haohsing_flutter/widgets/item/ItemVerticalEditWidget.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:auto_route/auto_route.dart';
+import '../../../../provider/UserProvider.dart';
+import 'BaseDeviceInfoNotifier.dart';
 import 'DeviceInfoProvider.dart';
 import 'package:haohsing_flutter/widgets/common/TextWidgets.dart';
 import 'package:haohsing_flutter/widgets/common/ImageWidgets.dart';
+
+import 'FakerDeviceInfoProvider.dart';
 
 @RoutePage()
 class DeviceInfoPage extends HookConsumerWidget {
@@ -37,8 +41,15 @@ class DeviceInfoPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final deviceInfoState = ref.watch(deviceInfoProvider);
-    final deviceInfoNotifier = ref.read(deviceInfoProvider.notifier);
+
+    final token = ref.read(userProvider).loginResponse?.token ?? "";
+
+    final provider = (token == '@@@user@@@' || token == '@@@engineer@@@')
+        ? fakerDeviceInfoProvider
+        : deviceInfoProvider;
+
+    final deviceInfoState = ref.watch(provider);
+    final deviceInfoNotifier = ref.read(provider.notifier);
     final deviceStatus = useState<DeviceStatus>(DeviceStatus.connect);
 
     useEffect(() {

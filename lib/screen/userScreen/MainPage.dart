@@ -49,9 +49,9 @@ class MainPage extends HookConsumerWidget {
         if(userState.userResponse!.name == null && isVerifyUserInfo == true){
           showStartSettingDialog(context);
         }
+        notifyNotifier.getShareList();
+        notifyNotifier.getMsg();
       });
-      notifyNotifier.getShareList();
-      notifyNotifier.getMsg();
       return null;
     }, []);
 
