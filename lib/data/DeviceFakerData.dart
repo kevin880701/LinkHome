@@ -1,4 +1,5 @@
 import '../model/response/device/deviceInfo/DeviceInfoResponse.dart';
+import '../model/response/device/deviceMember/DeviceMemberResponse.dart';
 import '../model/response/device/homeDeviceInfo/HomeDeviceInfoResponse.dart';
 import '../model/response/place/areaList/AreaListResponse.dart';
 import '../model/response/place/placeDtls/PlaceDtlsResponse.dart';
@@ -551,4 +552,55 @@ final mockDeviceInfoById = {
     statistics: null,
     engineerImages: [],
   ),
+};
+
+final mockDeviceMembersByPlaceId = {
+  101: [
+    const DeviceMemberResponse(
+      userId: 11,
+      name: '張大明',
+      account: 'zhangdm',
+      deviceNum: 2,
+      invite: false,
+    ),
+    const DeviceMemberResponse(
+      userId: 12,
+      name: '李小華',
+      account: 'li.xh',
+      deviceNum: 1,
+      invite: true,
+    ),
+    const DeviceMemberResponse(
+      userId: 13,
+      name: '王小美',
+      account: 'wangxm',
+      deviceNum: 3,
+      invite: false,
+    ),
+  ],
+  102: [
+    const DeviceMemberResponse(
+      userId: 21,
+      name: '陳柏宇',
+      account: 'chenby',
+      deviceNum: 1,
+      invite: false,
+    ),
+    const DeviceMemberResponse(
+      userId: 22,
+      name: '何美琪',
+      account: 'hemeiqi',
+      deviceNum: 2,
+      invite: true,
+    ),
+  ],
+  103: [
+    const DeviceMemberResponse(
+      userId: 31,
+      name: '趙又廷',
+      account: 'zhaoyt',
+      deviceNum: 1,
+      invite: false,
+    ),
+  ],
 };

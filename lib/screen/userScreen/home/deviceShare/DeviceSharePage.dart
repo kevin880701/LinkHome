@@ -15,9 +15,12 @@ import 'package:haohsing_flutter/widgets/common/ButtonWidgets.dart';
 import 'package:haohsing_flutter/widgets/home/DeviceShareItem.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:auto_route/auto_route.dart';
+import '../../../../provider/UserProvider.dart';
 import 'DeviceShareProvider.dart';
 import 'package:haohsing_flutter/widgets/common/TextWidgets.dart';
 import 'package:haohsing_flutter/widgets/common/ImageWidgets.dart';
+
+import 'FakerDeviceShareProvider.dart';
 
 @RoutePage()
 class DeviceSharePage extends HookConsumerWidget {
@@ -29,8 +32,14 @@ class DeviceSharePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final screenWidth = MediaQuery.of(context).size.width;
     final homeState = ref.watch(homeProvider);
-    final deviceShareState = ref.watch(deviceShareProvider);
-    final deviceShareNotifier = ref.read(deviceShareProvider.notifier);
+
+    final token = ref.read(userProvider).loginResponse?.token ?? "";
+    final provider = (token == '@@@user@@@' || token == '@@@engineer@@@')
+        ? fakerDeviceShareProvider
+        : deviceShareProvider;
+
+    final deviceShareNotifier = ref.read(provider.notifier);
+    final deviceShareState = ref.watch(provider);
 
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) async {

@@ -9,32 +9,14 @@ import 'package:haohsing_flutter/provider/UpdateStateProvider.dart';
 import 'package:haohsing_flutter/provider/UserProvider.dart';
 import 'package:haohsing_flutter/utils/AppLog.dart';
 
-class DeviceShareState {
-  final int placeId;
-  final List<DeviceMemberResponse> deviceMemberList;
-
-  DeviceShareState({
-    this.placeId = -1,
-    this.deviceMemberList = const [],
-  });
-
-  DeviceShareState copyWith({
-    int? placeId,
-    List<DeviceMemberResponse>? deviceMemberList,
-  }) {
-    return DeviceShareState(
-      placeId: placeId ?? this.placeId,
-      deviceMemberList: List.unmodifiable(deviceMemberList ?? this.deviceMemberList),
-    );
-  }
-}
+import 'BaseDeviceShareNotifier.dart';
 
 final deviceShareProvider = StateNotifierProvider.autoDispose<DeviceShareNotifier, DeviceShareState>((ref) {
   return DeviceShareNotifier(ref);
 });
 
-class DeviceShareNotifier extends StateNotifier<DeviceShareState> {
-  DeviceShareNotifier(this.ref) : super(DeviceShareState()) {
+class DeviceShareNotifier extends BaseDeviceShareNotifier {
+  DeviceShareNotifier(this.ref) : super(ref) {
     token = ref.read(userProvider).loginResponse?.token ?? "";
     ref.listen<UpdateState>(updateStateProvider, (previous, next) {
       if (previous?.deviceUpdated != next.deviceUpdated) {
