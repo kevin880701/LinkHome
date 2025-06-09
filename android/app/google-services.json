@@ -1,0 +1,142 @@
+{
+  "project_info": {
+    "project_number": "237177868286",
+    "project_id": "haohsing-374de",
+    "storage_bucket": "haohsing-374de.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:237177868286:android:85acdcd824674b2a38baaf",
+        "android_client_info": {
+          "package_name": "com.clockworkorange.haohsing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "237177868286-qgut17udmqo4moljck5d02sdrfpd1geg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.clockworkorange.haohsing",
+            "certificate_hash": "405d48fa3272674bac4ad539e77fef48657bc663"
+          }
+        },
+        {
+          "client_id": "237177868286-l86n9f25i2h8jk6ol8gbi6l7s8k80tf5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxqcCKYbBr3iWA_AZF1F0riL0aQmSSEN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "237177868286-6hflest364kqgtgqk4svsm7vmu2qrrak.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "237177868286-gjcg1u2jnfbr55trcp9qr2ojf0dpt8d7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.clockworkorange.haohsing"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:237177868286:android:2fb50502d8b0090e38baaf",
+        "android_client_info": {
+          "package_name": "com.clockworkorange.kichenpro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "237177868286-l86n9f25i2h8jk6ol8gbi6l7s8k80tf5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxqcCKYbBr3iWA_AZF1F0riL0aQmSSEN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "237177868286-6hflest364kqgtgqk4svsm7vmu2qrrak.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "237177868286-gjcg1u2jnfbr55trcp9qr2ojf0dpt8d7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.clockworkorange.haohsing"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:237177868286:android:bec3cb7fec87c21c38baaf",
+        "android_client_info": {
+          "package_name": "com.clockworkorange.kitchenpro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "237177868286-0ugdmc8sofqvnoeahso2rnkmf4ndqael.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.clockworkorange.kitchenpro",
+            "certificate_hash": "d383ce3be4e460d370e1c130526e67a9804118e4"
+          }
+        },
+        {
+          "client_id": "237177868286-ko5tfp9bvddfo2475t1fi39dupqrnlvg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.clockworkorange.kitchenpro",
+            "certificate_hash": "33cbc4e41aa157c271791bf81240a910de249a79"
+          }
+        },
+        {
+          "client_id": "237177868286-l86n9f25i2h8jk6ol8gbi6l7s8k80tf5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxqcCKYbBr3iWA_AZF1F0riL0aQmSSEN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "237177868286-6hflest364kqgtgqk4svsm7vmu2qrrak.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "237177868286-gjcg1u2jnfbr55trcp9qr2ojf0dpt8d7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.clockworkorange.haohsing"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
