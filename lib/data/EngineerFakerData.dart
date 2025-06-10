@@ -3,6 +3,7 @@ import 'package:haohsing_flutter/model/response/maintenance/engineerWorkOrder/En
 
 import '../model/response/maintenance/getTaskInformation/GetTaskInformationResponse.dart';
 import '../model/response/maintenance/maintenanceForm/MaintenanceFormResponse.dart';
+import '../model/response/maintenance/taskType/TaskTypeResponse.dart';
 import '../model/task/TaskStatus.dart';
 
 final now = DateTime.now();
@@ -102,7 +103,7 @@ final List<GetTaskInformationResponse> mockGetTaskInformationList = List.generat
     int userId = 20 + (index % 5);
     int engineer = 160 + (index % 10);
     String engineerName = '工程師${['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'][index % 10]}';
-    int type = index % 4 + 1;
+    int type = index % 3 + 1;
     String tel = '09${(index % 10).toString().padLeft(2, '0')}${(8000000 + index).toString().substring(1)}';
     String vendorName = '霈龍實業有限公司';
     String vendorTel = '07-72777575';
@@ -290,4 +291,12 @@ final List<MaintenanceFormResponse> maintenanceFormType3 = [
   MaintenanceFormResponse(code: "CDE10", types: "維修", group1: "更換零件", group2: "RO機類", item: "RO膜殼"),
   MaintenanceFormResponse(code: "CDE11", types: "維修", group1: "更換零件", group2: "RO機類", item: "接頭"),
   MaintenanceFormResponse(code: "CDF1", types: "維修", group1: "更換零件", group2: "其它", item: ""),
+];
+
+final List<TaskTypeResponse> mockTaskTypeList = [
+  TaskTypeResponse(id: 1, name: "安裝"),
+  TaskTypeResponse(id: 2, name: "保養"),
+  TaskTypeResponse(id: 3, name: "維修"),
+  TaskTypeResponse(id: 4, name: "場勘"),
+  TaskTypeResponse(id: 5, name: "退貨"),
 ];

@@ -7,33 +7,15 @@ import 'package:haohsing_flutter/provider/UpdateStateProvider.dart';
 import 'package:haohsing_flutter/provider/UserProvider.dart';
 import 'package:haohsing_flutter/utils/AppLog.dart';
 
-class TaskRecordState {
-  final List<EngineerWorkOrderResponse> taskRecordList;
-  final List<TaskTypeResponse> taskTypeList;
-
-  TaskRecordState({
-    this.taskRecordList = const [],
-    this.taskTypeList = const [],
-  });
-
-  TaskRecordState copyWith({
-    List<EngineerWorkOrderResponse>? taskRecordList,
-    List<TaskTypeResponse>? taskTypeList,
-  }) {
-    return TaskRecordState(
-      taskRecordList: List.unmodifiable(taskRecordList ?? this.taskRecordList),
-      taskTypeList: List.unmodifiable(taskTypeList ?? this.taskTypeList),
-    );
-  }
-}
+import 'BaseTaskRecordNotifier.dart';
 
 final taskRecordProvider = StateNotifierProvider.autoDispose<TaskRecordNotifier, TaskRecordState>(
         (ref) {
       return TaskRecordNotifier(ref);
     });
 
-class TaskRecordNotifier extends StateNotifier<TaskRecordState> {
-  TaskRecordNotifier(this.ref) : super(TaskRecordState()) {
+class TaskRecordNotifier extends BaseTaskRecordNotifier {
+  TaskRecordNotifier(this.ref) : super() {
     token = ref.read(userProvider).loginResponse?.token ?? "";
     ref.listen<UpdateState>(updateStateProvider, (previous, next) {
       if ((previous?.maintenanceUpdated != next.maintenanceUpdated)) {

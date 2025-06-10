@@ -18,6 +18,9 @@ import 'package:intl/intl.dart';
 import 'package:haohsing_flutter/widgets/common/TextWidgets.dart';
 import 'package:haohsing_flutter/widgets/common/ImageWidgets.dart';
 
+import '../../provider/UserProvider.dart';
+import '../../screen/engineerScreen/taskRecord/FakerTaskRecordProvider.dart';
+
 class TaskRecordListWidget extends HookConsumerWidget {
   final ValueNotifier<int> currentTypeIndex;
   final TextEditingController controller;
@@ -31,7 +34,13 @@ class TaskRecordListWidget extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final maintenanceState = ref.watch(taskRecordProvider);
+    final token = ref.read(userProvider).loginResponse?.token ?? "";
+    final provider = (token == '@@@user@@@' || token == '@@@engineer@@@')
+        ? fakerTaskRecordProvider
+        : taskRecordProvider;
+
+    final maintenanceState = ref.watch(provider);
+
     final taskRecordMap =
         useState<Map<String, List<EngineerWorkOrderResponse>>>({});
     final abnormalTaskRecords = useState<List<EngineerWorkOrderResponse>>([]);

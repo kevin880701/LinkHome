@@ -16,6 +16,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:auto_route/auto_route.dart';
 
+import '../../../provider/UserProvider.dart';
+import 'FakerTaskRecordProvider.dart';
+
 @RoutePage()
 class TaskRecordPage extends HookConsumerWidget {
   const TaskRecordPage({
@@ -24,8 +27,14 @@ class TaskRecordPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final maintenanceState = ref.watch(taskRecordProvider);
-    final maintenanceNotifier = ref.read(taskRecordProvider.notifier);
+    final token = ref.read(userProvider).loginResponse?.token ?? "";
+    final provider = (token == '@@@user@@@' || token == '@@@engineer@@@')
+        ? fakerTaskRecordProvider
+        : taskRecordProvider;
+
+    final maintenanceNotifier = ref.read(provider.notifier);
+    final maintenanceState = ref.watch(provider);
+
     final taskRecordMap = useState<Map<String, List<EngineerWorkOrderResponse>>>({});
     final currentTypeIndex = useState<int>(0);
 
