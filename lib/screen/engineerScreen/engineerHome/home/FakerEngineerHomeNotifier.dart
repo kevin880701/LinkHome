@@ -19,9 +19,6 @@ class FakerEngineerHomeNotifier extends BaseEngineerHomeNotifier {
     required int month,
     int? day,
   }) async {
-    print('＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝');
-    print('year: $year, month: $month, day: $day');
-    print('＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝');
     // 1. 先過濾出符合年月的工單
     final filtered = mockEngineerWorkOrderList.where((order) {
       final dt = DateTime.parse(order.appointedDatetime);
@@ -41,9 +38,6 @@ class FakerEngineerHomeNotifier extends BaseEngineerHomeNotifier {
       state = state.copyWith(dayWorkOrders: filtered);
     }
 
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-    print("${filtered.length}");
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     return filtered;
   }
 }

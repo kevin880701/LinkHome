@@ -33,6 +33,9 @@ import 'package:haohsing_flutter/widgets/MainTitleBar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:auto_route/auto_route.dart';
 
+import '../../../../provider/UserProvider.dart';
+import 'FakerTaskInformationProvider.dart';
+
 @RoutePage()
 class TaskInformationPage extends HookConsumerWidget {
   final int mId;
@@ -44,8 +47,13 @@ class TaskInformationPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final taskInformationState = ref.watch(taskInformationProvider);
-    final taskInformationNotifier = ref.read(taskInformationProvider.notifier);
+    final token = ref.read(userProvider).loginResponse?.token ?? "";
+    final provider = (token == '@@@user@@@' || token == '@@@engineer@@@')
+        ? fakerTaskInformationProvider
+        : taskInformationProvider;
+
+    final taskInformationNotifier = ref.read(provider.notifier);
+    final taskInformationState = ref.watch(provider);
 
     final customerMedia = useState<List<String>>([]);
     final groupedValues = useState<Map<String, Map<String?, Map<String?, List<Value>>>>>({});

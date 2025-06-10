@@ -6,33 +6,15 @@ import 'package:haohsing_flutter/provider/UpdateStateProvider.dart';
 import 'package:haohsing_flutter/provider/UserProvider.dart';
 import 'package:haohsing_flutter/utils/AppLog.dart';
 
-class TaskInformationState {
-  final GetTaskInformationResponse? taskInformation;
-  final int mId;
-
-  TaskInformationState({
-    this.taskInformation,
-    this.mId = -1,
-  });
-
-  TaskInformationState copyWith({
-    GetTaskInformationResponse? taskInformation,
-    int? mId,
-  }) {
-    return TaskInformationState(
-      taskInformation: taskInformation ?? this.taskInformation,
-      mId: mId ?? this.mId,
-    );
-  }
-}
+import 'BaseTaskInformationNotifier.dart';
 
 final taskInformationProvider = StateNotifierProvider.autoDispose<TaskInformationNotifier, TaskInformationState>(
         (ref) {
   return TaskInformationNotifier(ref);
 });
 
-class TaskInformationNotifier extends StateNotifier<TaskInformationState> {
-  TaskInformationNotifier(this.ref) : super(TaskInformationState()) {
+class TaskInformationNotifier extends BaseTaskInformationNotifier {
+  TaskInformationNotifier(this.ref) : super() {
     token = ref.read(userProvider).loginResponse?.token ?? "";
     ref.listen<UpdateState>(updateStateProvider, (previous, next) {
       if ((previous?.maintenanceUpdated != next.maintenanceUpdated)) {
