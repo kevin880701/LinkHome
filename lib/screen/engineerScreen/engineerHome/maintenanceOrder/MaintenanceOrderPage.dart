@@ -30,6 +30,9 @@ import 'package:signature/signature.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:haohsing_flutter/widgets/common/TextWidgets.dart';
 
+import '../../../../provider/UserProvider.dart';
+import 'FakerMaintenanceOrderProvider.dart';
+
 @RoutePage()
 class MaintenanceOrderPage extends HookConsumerWidget {
   final int mId;
@@ -43,8 +46,13 @@ class MaintenanceOrderPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final maintenanceOrderState = ref.watch(maintenanceOrderProvider);
-    final maintenanceOrderNotifier = ref.read(maintenanceOrderProvider.notifier);
+    final token = ref.read(userProvider).loginResponse?.token ?? "";
+    final provider = (token == '@@@user@@@' || token == '@@@engineer@@@')
+        ? fakerMaintenanceOrderProvider
+        : maintenanceOrderProvider;
+
+    final maintenanceOrderNotifier = ref.read(provider.notifier);
+    final maintenanceOrderState = ref.watch(provider);
 
     final tds = useState<String>('');
     final waterTesting = useState<String>('');

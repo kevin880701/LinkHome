@@ -18,53 +18,15 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:signature/signature.dart';
 
-class MaintenanceOrderState {
-  final int mId;
-  final List<MaintenanceFormResponse> replaceFilterList;
-  final List<MaintenanceFormResponse> basicMaintenanceList;
-  final List<MaintenanceFormResponse> abnormalReasonList;
-  final List<MaintenanceFormResponse> repairContentList;
-  final List<MaintenanceFormResponse> replacePartList;
-  final Map<String, String> filterLife;
-
-  MaintenanceOrderState({
-    this.mId = -1,
-    this.replaceFilterList = const [],
-    this.basicMaintenanceList = const [],
-    this.abnormalReasonList = const [],
-    this.repairContentList = const [],
-    this.replacePartList = const [],
-    this.filterLife = const {},
-  });
-
-  MaintenanceOrderState copyWith({
-    int? mId,
-    List<MaintenanceFormResponse>? replaceFilterList,
-    List<MaintenanceFormResponse>? basicMaintenanceList,
-    List<MaintenanceFormResponse>? abnormalReasonList,
-    List<MaintenanceFormResponse>? repairContentList,
-    List<MaintenanceFormResponse>? replacePartList,
-    Map<String, String>? filterLife,
-  }) {
-    return MaintenanceOrderState(
-      mId: mId ?? this.mId,
-      replaceFilterList: List.unmodifiable(replaceFilterList ?? this.replaceFilterList),
-      basicMaintenanceList: List.unmodifiable(basicMaintenanceList ?? this.basicMaintenanceList),
-      abnormalReasonList: List.unmodifiable(abnormalReasonList ?? this.abnormalReasonList),
-      repairContentList: List.unmodifiable(repairContentList ?? this.repairContentList),
-      replacePartList: List.unmodifiable(replacePartList ?? this.replacePartList),
-      filterLife: filterLife ?? this.filterLife,
-    );
-  }
-}
+import 'BaseMaintenanceOrderNotifier.dart';
 
 final maintenanceOrderProvider =
     StateNotifierProvider.autoDispose<MaintenanceOrderNotifier, MaintenanceOrderState>((ref) {
   return MaintenanceOrderNotifier(ref);
 });
 
-class MaintenanceOrderNotifier extends StateNotifier<MaintenanceOrderState> {
-  MaintenanceOrderNotifier(this.ref) : super(MaintenanceOrderState()) {
+class MaintenanceOrderNotifier extends BaseMaintenanceOrderNotifier {
+  MaintenanceOrderNotifier(this.ref) : super() {
     token = ref.read(userProvider).loginResponse?.token ?? "";
     ref.listen<UpdateState>(updateStateProvider, (previous, next) {
       if ((previous?.deviceUpdated != next.deviceUpdated) || (previous?.placeUpdated != next.placeUpdated)) {}
@@ -78,10 +40,12 @@ class MaintenanceOrderNotifier extends StateNotifier<MaintenanceOrderState> {
   final PlaceApiManager placeApiManager = PlaceApiManager.instance;
   late final DeviceApiManager deviceApiManager;
 
+  @override
   Future<void> updateMId({required int mId})async {
     state = state.copyWith(mId: mId);
   }
 
+  @override
   Future<List<MaintenanceFormResponse>> getMaintenanceForm({required int type}) async {
     try {
       final response = await maintenanceApiManager.getMaintenanceForm(token, type);
@@ -111,6 +75,7 @@ class MaintenanceOrderNotifier extends StateNotifier<MaintenanceOrderState> {
     return [];
   }
 
+  @override
   Future<TaskDoneResponse?> maintenanceFormDone({
     required String errorReason,
     required String fee,
@@ -245,6 +210,7 @@ class MaintenanceOrderNotifier extends StateNotifier<MaintenanceOrderState> {
     return null;
   }
 
+  @override
   Future<void> setFilterLife(
       {required int deviceId,
       required Map<String, String?> filterLife,

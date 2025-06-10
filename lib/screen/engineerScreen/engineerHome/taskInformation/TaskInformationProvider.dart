@@ -28,14 +28,17 @@ class TaskInformationNotifier extends BaseTaskInformationNotifier {
   final MaintenanceApiManager maintenanceApiManager = MaintenanceApiManager.instance;
   final PlaceApiManager placeApiManager = PlaceApiManager.instance;
 
+  @override
   void resetTaskInformation() {
     state = TaskInformationState(taskInformation: null, mId: -1);
   }
 
+  @override
   Future<void> updateMId(int mId) async {
     state = state.copyWith(mId: mId);
   }
 
+  @override
   Future<GetTaskInformationResponse?> getTaskInformation(int mId) async {
     try {
       final response = await maintenanceApiManager.getTaskInformation(token, mId);
