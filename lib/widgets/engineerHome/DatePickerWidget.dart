@@ -72,6 +72,7 @@ class DatePickerWidget extends HookWidget {
             padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
             height: screenHeight / 3.3,
             child: SfDateRangePicker(
+              selectionColor: Colors.transparent,
               controller: _controller,
               minDate: DateTime.now().add(const Duration(days: -200)),
               maxDate: DateTime.now().add(const Duration(days: 500)),
