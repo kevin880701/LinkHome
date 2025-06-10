@@ -189,10 +189,4 @@ flutter:
 flutter_icons:
   android: true
   ios: true
-  android_enable_round_icon: true
   image_path: "assets/images/app_icon.png"
-  adaptive_icon_background: "#ffffff"
-  adaptive_icon_foreground: "assets/images/app_icon.png"
-  android_adaptive_icon_background: "#ffffff"
-  android_adaptive_icon_foreground: "assets/images/app_icon.png"
-  remove_alpha_ios: true
